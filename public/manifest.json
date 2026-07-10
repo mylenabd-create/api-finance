@@ -1,0 +1,26 @@
+{
+  "name": "Gestor de Vida",
+  "short_name": "Gestor de Vida",
+  "description": "Secretária pessoal com IA para finanças, hábitos, agenda e vida espiritual.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#10151C",
+  "theme_color": "#10151C",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

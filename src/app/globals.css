@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #10151c;
+  --bg-panel: #171e27;
+  --bg-panel-raised: #1e2732;
+  --line: #2a3441;
+  --text: #edede6;
+  --text-dim: #8c97a3;
+  --accent: #c9a15e;
+  --accent-soft: rgba(201, 161, 94, 0.14);
+  --teal: #5b9c93;
+  --coral: #d9765a;
+  --purple: #b77cc9;
+  --blue: #7c8fc9;
+
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), monospace;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-panel-raised: var(--bg-panel-raised);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-text-dim: var(--text-dim);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-teal: var(--teal);
+  --color-coral: var(--coral);
+  --color-purple: var(--purple);
+  --color-blue: var(--blue);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes lm-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.lm-live {
+  animation: lm-pulse 2s ease-in-out infinite;
+}
