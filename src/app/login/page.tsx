@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { BASE_PATH } from "@/lib/basePath";
 import { Send } from "lucide-react";
 
 export default function LoginPage() {
@@ -46,7 +47,7 @@ export default function LoginPage() {
     setErro(null);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}${BASE_PATH}/auth/callback` },
     });
     if (error) setErro(error.message);
   }

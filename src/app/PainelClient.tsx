@@ -22,6 +22,7 @@ import {
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { createClient } from "@/lib/supabase/client";
+import { BASE_PATH } from "@/lib/basePath";
 import type { Tables } from "@/lib/database.types";
 
 export type ModuleData = {
@@ -106,7 +107,7 @@ export function PainelClient({
     setEnviando(true);
     setFeedback(null);
     try {
-      const res = await fetch("/api/mensagem", {
+      const res = await fetch(`${BASE_PATH}/api/mensagem`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ texto }),

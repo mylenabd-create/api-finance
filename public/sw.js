@@ -1,5 +1,6 @@
 const CACHE_VERSION = "gestor-de-vida-v1";
-const OFFLINE_URL = "/offline";
+const BASE_PATH = "/cerne-gestor";
+const OFFLINE_URL = BASE_PATH + "/offline";
 const PRECACHE_URLS = [OFFLINE_URL, "/manifest.json", "/icons/icon.svg", "/icons/icon-maskable.svg"];
 
 self.addEventListener("install", (event) => {
@@ -29,7 +30,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   // nunca cachear chamadas de API — sempre precisam de dados/sessão frescos
-  if (url.pathname.startsWith("/api/")) return;
+  if (url.pathname.startsWith(BASE_PATH + "/api/")) return;
 
   if (request.mode === "navigate") {
     event.respondWith(
