@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import { Tabs } from "@/components/ui/Tabs";
 import { Avatar } from "@/components/ui/Avatar";
+import { BackButton } from "@/components/ui/BackButton";
 import { createClient } from "@/lib/supabase/client";
 import { DespesasTab } from "./DespesasTab";
 import { ReceitasTab } from "./ReceitasTab";
@@ -81,7 +82,10 @@ export function FinancasClient({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-lg font-medium">Finanças</h1>
+        <div className="flex items-center gap-2">
+          <BackButton />
+          <h1 className="font-display text-lg font-medium">Finanças</h1>
+        </div>
         <div className="rounded-full border border-line bg-bg-panel px-2.5 py-1 text-xs text-text-dim">
           {nomeMesAtual}
         </div>

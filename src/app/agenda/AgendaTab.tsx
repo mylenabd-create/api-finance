@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { tipoCompromissoMeta } from "./constants";
+import { ConectarGoogleAgenda } from "./ConectarGoogleAgenda";
 import type { CompromissoComPessoa, Pessoa, TipoCompromisso } from "./types";
 
 function formatDataGrupo(dataISO: string, hoje: string) {
@@ -30,11 +31,15 @@ export function AgendaTab({
   pessoas,
   compromissos,
   hoje,
+  googleConectado,
+  ultimaSincronizacaoGoogle,
 }: {
   contaId: string;
   pessoas: Pessoa[];
   compromissos: CompromissoComPessoa[];
   hoje: string;
+  googleConectado: boolean;
+  ultimaSincronizacaoGoogle: string | null;
 }) {
   const [formAberto, setFormAberto] = useState(false);
 
@@ -50,6 +55,11 @@ export function AgendaTab({
 
   return (
     <div className="flex flex-col gap-4">
+      <ConectarGoogleAgenda
+        conectado={googleConectado}
+        ultimaSincronizacao={ultimaSincronizacaoGoogle}
+      />
+
       <button
         onClick={() => setFormAberto((v) => !v)}
         className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-bg-panel px-4 py-2.5 text-[12.5px] text-accent"

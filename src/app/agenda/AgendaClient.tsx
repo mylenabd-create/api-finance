@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Tabs } from "@/components/ui/Tabs";
+import { BackButton } from "@/components/ui/BackButton";
 import { AgendaTab } from "./AgendaTab";
 import { TarefasTab } from "./TarefasTab";
 import { TrabalhoVidaTab } from "./TrabalhoVidaTab";
@@ -16,6 +17,8 @@ export function AgendaClient({
   compromissosSemanaPassada,
   tarefas,
   hoje,
+  googleConectado,
+  ultimaSincronizacaoGoogle,
 }: {
   contaId: string;
   pessoas: Pessoa[];
@@ -23,12 +26,17 @@ export function AgendaClient({
   compromissosSemanaPassada: CompromissoComPessoa[];
   tarefas: TarefaComPessoa[];
   hoje: string;
+  googleConectado: boolean;
+  ultimaSincronizacaoGoogle: string | null;
 }) {
   const [tab, setTab] = useState<TabKey>("agenda");
 
   return (
     <div className="px-4 pb-6 pt-4">
-      <h1 className="mb-4 font-display text-xl">Agenda & tempo</h1>
+      <div className="mb-4 flex items-center gap-2">
+        <BackButton />
+        <h1 className="font-display text-xl">Agenda & tempo</h1>
+      </div>
 
       <Tabs<TabKey>
         tabs={[
@@ -46,6 +54,8 @@ export function AgendaClient({
           pessoas={pessoas}
           compromissos={compromissos}
           hoje={hoje}
+          googleConectado={googleConectado}
+          ultimaSincronizacaoGoogle={ultimaSincronizacaoGoogle}
         />
       )}
 

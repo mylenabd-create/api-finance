@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Tabs } from "@/components/ui/Tabs";
+import { BackButton } from "@/components/ui/BackButton";
 import type { Tables } from "@/lib/database.types";
 import { HabitosTab } from "./HabitosTab";
 import { SonoTab } from "./SonoTab";
@@ -36,13 +37,16 @@ export function HabitosClient({
 
   return (
     <div>
-      <div className="mb-4.5">
-        <p className="m-0 font-mono text-[11.5px] uppercase tracking-[1.2px] text-text-dim">
-          Corpo & constância
-        </p>
-        <h1 className="mt-1 font-display text-2xl font-medium text-text">
-          Hábitos & corpo
-        </h1>
+      <div className="mb-4.5 flex items-center gap-2">
+        <BackButton />
+        <div>
+          <p className="m-0 font-mono text-[11.5px] uppercase tracking-[1.2px] text-text-dim">
+            Corpo & constância
+          </p>
+          <h1 className="mt-1 font-display text-2xl font-medium text-text">
+            Hábitos & corpo
+          </h1>
+        </div>
       </div>
 
       <Tabs tabs={tabs} active={tab} onChange={setTab} />

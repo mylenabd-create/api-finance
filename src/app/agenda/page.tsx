@@ -15,7 +15,7 @@ export default async function AgendaPage() {
   const supabase = await createClient();
   const hoje = hojeISO();
 
-  const [{ data: pessoas }, { data: compromissosRaw }, { data: tarefasRaw }] =
+  const [{ data: pessoas }, { data: compromissosRaw }, { data: tarefasRaw }, { data: conexaoGoogle }] =
     await Promise.all([
       supabase
         .from("pessoa")
@@ -34,6 +34,11 @@ export default async function AgendaPage() {
         .select("*")
         .eq("conta_id", conta.contaId)
         .order("prazo", { ascending: true }),
+      supabase
+        .from("google_calendar_conexao")
+        .select("ultima_sincronizacao")
+        .eq("user_id", conta.userId)
+        .maybeSingle(),
     ]);
 
   const pessoasList: Pessoa[] = pessoas ?? [];
@@ -80,6 +85,8 @@ export default async function AgendaPage() {
       compromissosSemanaPassada={compromissosSemanaPassada}
       tarefas={tarefas}
       hoje={hoje}
+      googleConectado={!!conexaoGoogle}
+      ultimaSincronizacaoGoogle={conexaoGoogle?.ultima_sincronizacao ?? null}
     />
   );
 }

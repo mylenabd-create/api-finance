@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Tabs } from "@/components/ui/Tabs";
+import { BackButton } from "@/components/ui/BackButton";
 import { EspiritualTab } from "./EspiritualTab";
 import { LeituraTab } from "./LeituraTab";
 import type { Pessoa, PraticaEspiritual, Livro } from "./types";
@@ -23,7 +24,10 @@ export function EspiritualClient({
 
   return (
     <div>
-      <h1 className="mb-4 font-display text-lg font-medium text-text">Espiritual & leitura</h1>
+      <div className="mb-4 flex items-center gap-2">
+        <BackButton />
+        <h1 className="font-display text-lg font-medium text-text">Espiritual & leitura</h1>
+      </div>
 
       <Tabs
         tabs={[
