@@ -178,13 +178,10 @@ export default async function Home() {
     : null;
 
   // ===== Trabalho x vida pessoal: compromissos tipo=trabalho hoje =====
-  const { data: compromissosHoje } = await supabase
-    .from("compromisso")
-    .select("id, tipo")
-    .eq("conta_id", conta.contaId)
-    .eq("data", hojeStr)
-    .eq("tipo", "trabalho");
-  const compromissosTrabalhoHoje = compromissosHoje?.length ?? 0;
+  // (derivado de `compromissos`, já buscado acima — evita uma query extra)
+  const compromissosTrabalhoHoje = (compromissos ?? []).filter(
+    (c) => c.data === hojeStr && c.tipo === "trabalho"
+  ).length;
 
   const modules: ModuleData[] = [
     {

@@ -39,6 +39,11 @@ export default function LoginPage() {
       return;
     }
 
+    // Cria a conta (primeiro login) ou corrige o nome da pessoa titular se
+    // ainda estiver genérico — só roda aqui, uma vez por login, não em toda
+    // navegação (ver src/lib/conta.ts).
+    await supabase.rpc("bootstrap_conta");
+
     router.replace("/");
     router.refresh();
   }
