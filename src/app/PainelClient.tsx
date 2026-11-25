@@ -28,6 +28,7 @@ import { createClient } from "@/lib/supabase/client";
 import { BASE_PATH } from "@/lib/basePath";
 import type { Tables } from "@/lib/database.types";
 import type { FraseDoDia } from "@/lib/fraseDoDia";
+import { BalancoMes } from "@/components/BalancoMes";
 
 export type ModuleData = {
   key: string;
@@ -139,11 +140,13 @@ export function PainelClient({
   lembretes,
   modules,
   frase,
+  balanco,
 }: {
   nomePessoa: string;
   lembretes: Tables<"lembrete">[];
   modules: ModuleData[];
   frase: FraseDoDia;
+  balanco: { entrou: number; saiu: number; saldo: number; meta: number };
 }) {
   const router = useRouter();
   const [dispensados, setDispensados] = useState<Set<string>>(new Set());
@@ -340,6 +343,9 @@ export function PainelClient({
         </div>
       )}
 
+      {/* Computador: duas colunas (saudação + secretária | balanço). Celular: uma coluna. */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-6">
+      <div className="min-w-0">
       <div className="mb-4.5">
         <p className="m-0 text-[11.5px] font-medium uppercase tracking-[1.2px] text-text-dim">
           {dataFormatada()}
@@ -471,14 +477,23 @@ export function PainelClient({
         <p className="mb-3.5 px-1 text-[12px] text-text-dim">{feedback}</p>
       )}
       {!feedback && <div className="mb-5" />}
+      </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="mb-5 lg:mb-0">
+        <BalancoMes entrou={balanco.entrou} saiu={balanco.saiu} href="/financas" />
+      </div>
+      </div>
+
+      <div className="mt-1 flex items-center justify-between lg:mt-8">
+        <h2 className="text-[13px] font-semibold uppercase tracking-[1.2px] text-text-dim">Suas áreas</h2>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         {modules.map((m) => (
           <ModuleCard key={m.key} module={m} />
         ))}
       </div>
 
-      <p className="my-5 text-center text-[11.5px] text-text-dim">
+      <p className="my-5 text-center text-[11.5px] text-text-dim lg:hidden">
         Toque em um card pra ver os detalhes
       </p>
     </div>
@@ -488,16 +503,16 @@ export function PainelClient({
 function ModuleCard({ module }: { module: ModuleData }) {
   const Icon = moduleIcons[module.icon];
   return (
-    <Link href={module.href}>
-      <Card className="h-full p-3.5">
+    <Link href={module.href} className="group">
+      <Card className="h-full p-3.5 transition-all duration-200 group-hover:-translate-y-1 group-hover:border-accent/40 group-hover:shadow-[0_10px_24px_rgba(49,0,79,0.10)] lg:p-4">
         <div className="mb-2.5 flex items-center justify-between">
           <div
-            className="flex h-[30px] w-[30px] items-center justify-center rounded-[9px]"
+            className="flex h-[30px] w-[30px] items-center justify-center rounded-[9px] transition-transform duration-200 group-hover:scale-110 lg:h-9 lg:w-9"
             style={{ background: `color-mix(in srgb, ${module.color} 12%, transparent)` }}
           >
             <Icon size={15} color={module.color} />
           </div>
-          <ChevronRight size={14} className="text-text-dim" />
+          <ChevronRight size={14} className="text-text-dim transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-accent" />
         </div>
         <p className="m-0 text-xs text-text-dim">{module.title}</p>
         <p className="mt-0.5 font-mono text-[19px] font-medium text-text">{module.metric}</p>

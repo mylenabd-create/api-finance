@@ -7,6 +7,7 @@ import { Tabs } from "@/components/ui/Tabs";
 import { useAba } from "@/lib/useAba";
 import { Avatar } from "@/components/ui/Avatar";
 import { BackButton } from "@/components/ui/BackButton";
+import { BalancoMes } from "@/components/BalancoMes";
 import { createClient } from "@/lib/supabase/client";
 import { DespesasTab } from "./DespesasTab";
 import { ReceitasTab } from "./ReceitasTab";
@@ -107,6 +108,12 @@ export function FinancasClient({
           <UserPlus size={12} /> pessoa
         </button>
       </div>
+
+      <BalancoMes
+        entrou={receitas.reduce((s, r) => s + Number(r.valor), 0)}
+        saiu={transacoesCompletas.reduce((s, t) => s + Number(t.valor), 0)}
+        mes={nomeMesAtual}
+      />
 
       <Tabs tabs={TABS} active={tab} onChange={setTab} />
 

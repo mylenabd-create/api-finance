@@ -58,6 +58,7 @@ export default async function Home() {
     { data: tarefas },
     { data: compromissos },
     { data: sonos },
+    { data: receitasMes },
   ] = await Promise.all([
     supabase
       .from("lembrete")
@@ -120,6 +121,11 @@ export default async function Home() {
       .eq("conta_id", conta.contaId)
       .order("data", { ascending: false })
       .limit(1),
+    supabase
+      .from("receita")
+      .select("valor")
+      .eq("conta_id", conta.contaId)
+      .gte("data", inicioMesStr),
   ]);
 
   // habito_registro não tem conta_id: filtra pelos ids de habito já escopados pela conta
@@ -134,6 +140,8 @@ export default async function Home() {
   const gastoMes = (transacoes ?? []).reduce((acc, t) => acc + Number(t.valor), 0);
   const somaMetas = (metas ?? []).reduce((acc, m) => acc + Number(m.valor), 0);
   const progressoFinancas = somaMetas > 0 ? gastoMes / somaMetas : null;
+  const recebidoMes = (receitasMes ?? []).reduce((acc, r) => acc + Number(r.valor), 0);
+  const saldoMes = recebidoMes - gastoMes;
 
   // ===== Espiritual: sequência de dias consecutivos até hoje =====
   const diasPratica = new Set((praticas ?? []).map((p) => p.data));
@@ -189,14 +197,13 @@ export default async function Home() {
       key: "financas",
       href: "/financas",
       title: "Finanças",
-      metric: gastoMes > 0 ? formatBRL(gastoMes) : "—",
-      sub: "gasto este mês",
+      // saldo do mês = tudo que entrou − tudo que saiu
+      metric: gastoMes > 0 || recebidoMes > 0 ? formatBRL(saldoMes) : "—",
+      sub: "saldo do mês",
       detail:
-        progressoFinancas !== null
-          ? `${Math.round(progressoFinancas * 100)}% do planejado`
-          : gastoMes > 0
-            ? "sem meta definida"
-            : "nenhum gasto ainda",
+        gastoMes > 0 || recebidoMes > 0
+          ? `entrou ${formatBRL(recebidoMes)} · saiu ${formatBRL(gastoMes)}`
+          : "nenhum lançamento ainda",
       progress: progressoFinancas,
       color: "var(--accent)",
       icon: "Wallet",
@@ -320,6 +327,7 @@ export default async function Home() {
   return (
     <PainelClient
       frase={frase}
+      balanco={{ entrou: recebidoMes, saiu: gastoMes, saldo: saldoMes, meta: somaMetas }}
       nomePessoa={nomePessoa}
       lembretes={(lembretes ?? []) as Tables<"lembrete">[]}
       modules={modules}

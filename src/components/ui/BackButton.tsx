@@ -6,7 +6,7 @@ export function BackButton() {
     <Link
       href="/"
       aria-label="Voltar ao início"
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text active:bg-bg-panel-raised"
+      className="flex h-8 w-8 shrink-0 lg:hidden items-center justify-center rounded-full text-text active:bg-bg-panel-raised"
     >
       <ArrowLeft size={20} />
     </Link>

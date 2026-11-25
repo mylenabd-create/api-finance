@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   manifest: `${BASE_PATH}/manifest.json`,
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black",
     title: "Cerne",
   },
   icons: {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f8f7fa",
+  themeColor: "#31004f",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
