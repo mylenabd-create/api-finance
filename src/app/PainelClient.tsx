@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -17,6 +17,8 @@ import {
   ChevronRight,
   X,
   CreditCard,
+  Mic,
+  Square,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -63,6 +65,35 @@ const lembreteCores: Record<Tables<"lembrete">["tipo"], string> = {
   tarefa: "var(--text-dim)",
 };
 
+// Tipos mínimos da Web Speech API (não vêm no lib.dom do TypeScript).
+interface ResultadoVoz {
+  isFinal: boolean;
+  0: { transcript: string };
+}
+interface ReconhecedorVoz {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: ((e: { resultIndex: number; results: ArrayLike<ResultadoVoz> }) => void) | null;
+  onerror: ((e: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+}
+type ConstrutorReconhecedor = new () => ReconhecedorVoz;
+
+function obterReconhecedor(): ConstrutorReconhecedor | null {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as {
+    SpeechRecognition?: ConstrutorReconhecedor;
+    webkitSpeechRecognition?: ConstrutorReconhecedor;
+  };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
+
+// suporte a voz não muda durante a sessão: nada para assinar
+const semInscricao = () => () => {};
+
 function saudacao(): string {
   const hora = new Date().getHours();
   if (hora < 12) return "Bom dia";
@@ -101,8 +132,57 @@ export function PainelClient({
     router.refresh();
   }
 
-  async function enviarMensagem() {
-    const texto = mensagem.trim();
+  // Reconhecimento de voz do próprio navegador (gratuito; Chrome/Android e
+  // Safari/iPhone). O texto falado vai para a caixa e é enviado sozinho.
+  const [ouvindo, setOuvindo] = useState(false);
+  const vozDisponivel = useSyncExternalStore(
+    semInscricao,
+    () => Boolean(obterReconhecedor()),
+    () => false
+  );
+  const reconhecedorRef = useRef<ReconhecedorVoz | null>(null);
+
+  function alternarVoz() {
+    if (ouvindo) {
+      reconhecedorRef.current?.stop();
+      return;
+    }
+    const Reconhecedor = obterReconhecedor();
+    if (!Reconhecedor) return;
+    const rec = new Reconhecedor();
+    rec.lang = "pt-BR";
+    rec.interimResults = true;
+    rec.continuous = false;
+    let finalTexto = "";
+    rec.onresult = (e) => {
+      let parcial = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) finalTexto += r[0].transcript;
+        else parcial += r[0].transcript;
+      }
+      setMensagem((finalTexto + parcial).trim());
+    };
+    rec.onerror = (e) => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        setFeedback("Permita o uso do microfone para falar com a secretária.");
+      } else if (e.error !== "no-speech" && e.error !== "aborted") {
+        setFeedback("Não consegui ouvir. Tente de novo.");
+      }
+    };
+    rec.onend = () => {
+      setOuvindo(false);
+      reconhecedorRef.current = null;
+      if (finalTexto.trim()) enviarMensagem(finalTexto.trim());
+    };
+    reconhecedorRef.current = rec;
+    setFeedback(null);
+    setOuvindo(true);
+    rec.start();
+  }
+
+  async function enviarMensagem(textoFalado?: string) {
+    const texto = (textoFalado ?? mensagem).trim();
     if (!texto || enviando) return;
     setEnviando(true);
     setFeedback(null);
@@ -201,12 +281,24 @@ export function PainelClient({
           onKeyDown={(e) => {
             if (e.key === "Enter") enviarMensagem();
           }}
-          placeholder="Fale com sua secretária..."
+          placeholder={ouvindo ? "Pode falar, estou ouvindo..." : "Digite ou fale: gastei 30 de mercado"}
           disabled={enviando}
-          className="flex-1 bg-transparent text-sm text-text outline-none placeholder:text-text-dim disabled:opacity-60"
+          className="min-w-0 flex-1 bg-transparent text-sm text-text outline-none placeholder:text-text-dim disabled:opacity-60"
         />
+        {vozDisponivel && (
+          <button
+            onClick={alternarVoz}
+            disabled={enviando}
+            aria-label={ouvindo ? "Parar de ouvir" : "Falar"}
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full disabled:opacity-40 ${
+              ouvindo ? "lm-live bg-coral text-white" : "bg-accent-soft text-accent"
+            }`}
+          >
+            {ouvindo ? <Square size={13} fill="currentColor" /> : <Mic size={16} />}
+          </button>
+        )}
         <button
-          onClick={enviarMensagem}
+          onClick={() => enviarMensagem()}
           disabled={enviando || !mensagem.trim()}
           aria-label="Enviar"
           className="shrink-0 disabled:opacity-40"
