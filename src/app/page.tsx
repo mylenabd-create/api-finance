@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PainelClient, type ModuleData } from "@/app/PainelClient";
 import type { Tables } from "@/lib/database.types";
 import { formatBRL } from "@/lib/format";
+import { fraseDoDia } from "@/lib/fraseDoDia";
 
 function inicioMes(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -302,8 +303,23 @@ export default async function Home() {
     },
   ];
 
+  const frase = fraseDoDia({
+    nome: nomePessoa,
+    // dia no fuso de Brasília, para a frase virar à meia-noite daqui
+    hojeStr: hoje.toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" }),
+    habitos: (habitos ?? []).map((h) => h.nome),
+    livroAtual: livroAtual?.titulo ?? null,
+    sequenciaEspiritual,
+    praticouHoje,
+    treinosSemana,
+    tarefasPendentes,
+    temMetaFinanceira: somaMetas > 0,
+    progressoFinancas,
+  });
+
   return (
     <PainelClient
+      frase={frase}
       nomePessoa={nomePessoa}
       lembretes={(lembretes ?? []) as Tables<"lembrete">[]}
       modules={modules}

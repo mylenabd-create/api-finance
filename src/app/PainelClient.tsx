@@ -27,6 +27,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { createClient } from "@/lib/supabase/client";
 import { BASE_PATH } from "@/lib/basePath";
 import type { Tables } from "@/lib/database.types";
+import type { FraseDoDia } from "@/lib/fraseDoDia";
 
 export type ModuleData = {
   key: string;
@@ -137,10 +138,12 @@ export function PainelClient({
   nomePessoa,
   lembretes,
   modules,
+  frase,
 }: {
   nomePessoa: string;
   lembretes: Tables<"lembrete">[];
   modules: ModuleData[];
+  frase: FraseDoDia;
 }) {
   const router = useRouter();
   const [dispensados, setDispensados] = useState<Set<string>>(new Set());
@@ -344,6 +347,19 @@ export function PainelClient({
         <h1 className="mt-1 font-display text-2xl text-text">
           {saudacao()}, {nomePessoa}
         </h1>
+      </div>
+
+      {/* Frase do dia: um dos momentos especiais em que o gradiente da marca aparece */}
+      <div className="relative mb-4 overflow-hidden rounded-2xl bg-deep p-4 text-white">
+        <div className="bg-brand-gradient absolute inset-y-0 left-0 w-1.5" aria-hidden="true" />
+        <div
+          className="bg-brand-gradient pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-25 blur-2xl"
+          aria-hidden="true"
+        />
+        <p className="relative flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-[1.4px] text-white/70">
+          <Sparkles size={12} /> Frase do dia{frase.tema !== "centro" ? ` · ${frase.tema}` : ""}
+        </p>
+        <p className="relative mt-1.5 text-[15px] font-medium leading-snug">{frase.texto}</p>
       </div>
 
       <Card className="mb-1.5 flex items-center gap-2.5 px-3.5 py-3">
