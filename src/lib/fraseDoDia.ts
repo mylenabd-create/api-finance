@@ -1,7 +1,9 @@
-// Frase do dia personalizada, sem IA: monta frases a partir das metas,
-// hábitos, leitura, prática espiritual e rotina da pessoa, e escolhe uma
-// por dia (a mesma frase o dia todo; muda no dia seguinte).
-// Tom de voz do Manual CERNE: claro, positivo, próximo, sem cobrança nem culpa.
+// Frase do dia, sem IA: tom direto, de "se liga na vida". Frases originais
+// inspiradas nas ideias de livros como Hábitos Atômicos, O Poder do Agora,
+// Antifrágil e O Segredo, e em passagens bíblicas (parafraseadas, com a
+// referência). Muitas são montadas com os dados da pessoa: hábitos, metas,
+// livro atual, prática espiritual, treinos e tarefas.
+// A mesma frase vale o dia todo; muda no dia seguinte.
 
 export interface ContextoFrase {
   nome: string;
@@ -18,20 +20,44 @@ export interface ContextoFrase {
 
 export interface FraseDoDia {
   texto: string;
-  tema: "finanças" | "hábitos" | "leitura" | "espiritual" | "movimento" | "foco" | "centro";
+  fonte: string; // inspiração ou referência
 }
 
+const HABITOS_ATOMICOS = "inspirado em Hábitos Atômicos";
+const PODER_DO_AGORA = "inspirado em O Poder do Agora";
+const ANTIFRAGIL = "inspirado em Antifrágil";
+const O_SEGREDO = "inspirado em O Segredo";
+
 const GERAIS: FraseDoDia[] = [
-  { tema: "centro", texto: "Organize sua vida. Encontre seu centro." },
-  { tema: "centro", texto: "Tudo começa pelo essencial. Qual é o seu essencial hoje?" },
-  { tema: "centro", texto: "Pequenos passos, repetidos com carinho, viram grandes mudanças." },
-  { tema: "centro", texto: "Você não precisa dar conta de tudo hoje. Só do próximo passo." },
-  { tema: "centro", texto: "Clareza vem antes do controle. Olhe para sua vida com calma." },
-  { tema: "centro", texto: "Evoluir é um movimento, não uma linha reta." },
-  { tema: "foco", texto: "Escolha uma coisa importante e dê a ela o melhor da sua manhã." },
-  { tema: "foco", texto: "Feito com presença vale mais do que perfeito." },
-  { tema: "centro", texto: "Seu tempo é a sua vida acontecendo. Use-o no que importa para você." },
-  { tema: "centro", texto: "Cuidar de si também é produtividade." },
+  // Hábitos Atômicos: sistemas, identidade, 1% ao dia
+  { fonte: HABITOS_ATOMICOS, texto: "Meta sem sistema é só desejo. O que você repete todo dia é o que você vira." },
+  { fonte: HABITOS_ATOMICOS, texto: "1% melhor hoje parece nada. Daqui a um ano é outra pessoa. Faz o seu 1%." },
+  { fonte: HABITOS_ATOMICOS, texto: "Cada ação é um voto na pessoa que você quer ser. Em quem você está votando hoje?" },
+  { fonte: HABITOS_ATOMICOS, texto: "Não espera motivação. Deixa o hábito tão fácil que dê vergonha não fazer." },
+  { fonte: HABITOS_ATOMICOS, texto: "Seu ambiente está te treinando o tempo todo. Arruma o ambiente e o resto vem." },
+  // O Poder do Agora: presença
+  { fonte: PODER_DO_AGORA, texto: "A vida só acontece agora. Para de ensaiar o futuro e de reprisar o passado." },
+  { fonte: PODER_DO_AGORA, texto: "Você não é os seus pensamentos. Observa a mente falando e escolhe o que fazer." },
+  { fonte: PODER_DO_AGORA, texto: "O problema de amanhã não se resolve hoje. A tarefa de hoje, sim. Foca nela." },
+  // Antifrágil: crescer com o caos
+  { fonte: ANTIFRAGIL, texto: "Pressão não é sinal para parar. É o treino que te deixa mais forte." },
+  { fonte: ANTIFRAGIL, texto: "Quem só busca conforto fica frágil. Escolhe um desconforto útil hoje." },
+  { fonte: ANTIFRAGIL, texto: "Erro pequeno e cedo é aula barata. Arrisca no pequeno, protege o essencial." },
+  { fonte: ANTIFRAGIL, texto: "Não basta aguentar o caos. Usa ele para sair melhor do que entrou." },
+  // O Segredo: foco e intenção
+  { fonte: O_SEGREDO, texto: "Onde vai a sua atenção, vai a sua energia. Para de alimentar o que você não quer." },
+  { fonte: O_SEGREDO, texto: "Decide o que você quer com clareza. Quem não sabe para onde vai aceita qualquer caminho." },
+  { fonte: O_SEGREDO, texto: "Gratidão não é frescura: muda o que você enxerga e o que você atrai." },
+  // Bíblia (paráfrases com referência)
+  { fonte: "Provérbios 6:6-8", texto: "Olha a formiga: ninguém manda nela e ela faz a parte dela no tempo certo. E você?" },
+  { fonte: "Provérbios 16:3", texto: "Entrega teus planos a Deus e põe a mão na massa. Fé e trabalho andam juntos." },
+  { fonte: "Eclesiastes 3:1", texto: "Tem tempo para tudo. Mas o tempo que passou não volta. Usa bem o de hoje." },
+  { fonte: "Mateus 6:34", texto: "Não carrega hoje o peso de amanhã. Cada dia tem a sua própria luta." },
+  { fonte: "Lucas 16:10", texto: "Quem é fiel no pouco é fiel no muito. Começa cuidando bem do pouco que você tem." },
+  { fonte: "Tiago 2:17", texto: "Fé sem atitude não sai do lugar. Qual atitude a sua fé pede hoje?" },
+  { fonte: "Filipenses 4:13", texto: "Você pode mais do que imagina. Para de se subestimar e vai." },
+  { fonte: "Josué 1:9", texto: "Coragem. Medo não é motivo para recuar, é sinal de que vale a pena." },
+  { fonte: "Cerne", texto: "Organize sua vida. Encontre seu centro. E faz isso hoje, não segunda-feira." },
 ];
 
 function hashDia(s: string): number {
@@ -51,45 +77,45 @@ function personalizadas(c: ContextoFrase): FraseDoDia[] {
   // Finanças
   if (c.temMetaFinanceira && c.progressoFinancas !== null) {
     if (c.progressoFinancas < 0.8) {
-      p.push({ tema: "finanças", texto: `${voc}seus gastos estão dentro do planejado. Cada escolha consciente te aproxima das suas metas.` });
+      p.push({ fonte: "Provérbios 21:5", texto: `${voc}o plano está funcionando. Quem planeja e segue o plano colhe. Não afrouxa agora.` });
     } else if (c.progressoFinancas <= 1) {
-      p.push({ tema: "finanças", texto: "Você está perto do limite que definiu para o mês. Respire e escolha com intenção: o plano é seu." });
+      p.push({ fonte: HABITOS_ATOMICOS, texto: "Você está no limite do que definiu para o mês. Cada compra agora é um voto: no seu plano ou contra ele." });
     } else {
-      p.push({ tema: "finanças", texto: "Mês apertado não define você. Ajustar a rota também é estar no controle." });
+      p.push({ fonte: ANTIFRAGIL, texto: "Estourou a meta. Beleza: dado é dado. Entende onde vazou e ajusta. Quem aprende com o erro fica mais forte." });
     }
   } else {
-    p.push({ tema: "finanças", texto: "Dinheiro organizado é tranquilidade. Que tal definir uma meta para este mês?" });
+    p.push({ fonte: O_SEGREDO, texto: "Dinheiro sem destino some. Define uma meta para este mês e dá direção para cada real." });
   }
 
   // Hábitos
   if (c.habitos.length > 0) {
     const h = c.habitos[hashDia(c.hojeStr + "h") % c.habitos.length];
-    p.push({ tema: "hábitos", texto: `"${h}" é um presente que você dá para a sua versão de amanhã.` });
-    p.push({ tema: "hábitos", texto: `${voc}consistência não é fazer muito: é voltar sempre. Seus hábitos te esperam hoje.` });
+    p.push({ fonte: HABITOS_ATOMICOS, texto: `"${h}": não precisa ser perfeito, precisa ser hoje. Falhou ontem? Hoje não pode falhar de novo.` });
+    p.push({ fonte: HABITOS_ATOMICOS, texto: `${voc}sonho grande com rotina bagunçada não fecha a conta. Quem decide seu resultado é a sua rotina.` });
   }
 
   // Leitura
   if (c.livroAtual) {
-    p.push({ tema: "leitura", texto: `Algumas páginas de "${c.livroAtual}" hoje já são um avanço.` });
+    p.push({ fonte: "Cerne", texto: `"${c.livroAtual}" não vai se ler sozinho. Dez páginas hoje. Sem desculpa.` });
   }
 
   // Espiritual
   if (c.sequenciaEspiritual >= 2) {
-    p.push({ tema: "espiritual", texto: `${c.sequenciaEspiritual} dias seguidos cuidando do seu interior. Continue voltando ao seu centro.` });
+    p.push({ fonte: "Isaías 40:31", texto: `${c.sequenciaEspiritual} dias seguidos. Quem renova as forças no Senhor corre e não se cansa. Segue firme.` });
   } else if (!c.praticouHoje) {
-    p.push({ tema: "espiritual", texto: "Reserve um momento de silêncio hoje. É ali que a gente se reencontra." });
+    p.push({ fonte: "Marcos 1:35", texto: "Até Jesus levantava cedo para orar antes de tudo. Qual é a sua desculpa hoje?" });
   }
 
   // Movimento
   if (c.treinosSemana > 0) {
-    p.push({ tema: "movimento", texto: `${c.treinosSemana} ${c.treinosSemana === 1 ? "treino" : "treinos"} nesta semana. Seu corpo agradece cada movimento.` });
+    p.push({ fonte: ANTIFRAGIL, texto: `${c.treinosSemana} ${c.treinosSemana === 1 ? "treino" : "treinos"} na semana. O corpo cresce com o esforço. Não deixa a semana esfriar.` });
   } else {
-    p.push({ tema: "movimento", texto: "Uma caminhada curta já muda o dia. Movimento também é cuidado." });
+    p.push({ fonte: ANTIFRAGIL, texto: "Nenhum treino na semana. Corpo parado enferruja. Vinte minutos hoje já quebram o ciclo." });
   }
 
   // Foco / tarefas
   if (c.tarefasPendentes > 0) {
-    p.push({ tema: "foco", texto: `${voc}você tem ${c.tarefasPendentes} ${c.tarefasPendentes === 1 ? "tarefa" : "tarefas"} na lista. Comece pela que deixa seu dia mais leve.` });
+    p.push({ fonte: PODER_DO_AGORA, texto: `${voc}${c.tarefasPendentes} ${c.tarefasPendentes === 1 ? "tarefa esperando" : "tarefas esperando"}. Pensar nelas cansa mais do que fazer. Escolhe uma e resolve agora.` });
   }
 
   return p;
@@ -97,8 +123,8 @@ function personalizadas(c: ContextoFrase): FraseDoDia[] {
 
 export function fraseDoDia(c: ContextoFrase): FraseDoDia {
   const pessoais = personalizadas(c);
-  // 2 em cada 3 dias a frase é personalizada; no outro, uma frase da marca
+  // metade dos dias usa os dados da pessoa; na outra, uma frase do acervo
   const h = hashDia(c.hojeStr);
-  const lista = pessoais.length > 0 && h % 3 !== 0 ? pessoais : GERAIS;
-  return lista[h % lista.length];
+  const lista = pessoais.length > 0 && h % 2 === 0 ? pessoais : GERAIS;
+  return lista[Math.floor(h / 2) % lista.length];
 }

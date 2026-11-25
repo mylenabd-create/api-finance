@@ -357,9 +357,10 @@ export function PainelClient({
           aria-hidden="true"
         />
         <p className="relative flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-[1.4px] text-white/70">
-          <Sparkles size={12} /> Frase do dia{frase.tema !== "centro" ? ` · ${frase.tema}` : ""}
+          <Sparkles size={12} /> Se liga
         </p>
-        <p className="relative mt-1.5 text-[15px] font-medium leading-snug">{frase.texto}</p>
+        <p className="relative mt-1.5 text-[15.5px] font-semibold leading-snug">{frase.texto}</p>
+        <p className="relative mt-2 text-[11px] italic text-white/60">{frase.fonte}</p>
       </div>
 
       <Card className="mb-1.5 flex items-center gap-2.5 px-3.5 py-3">
