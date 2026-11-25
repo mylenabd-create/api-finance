@@ -245,7 +245,7 @@ function NovoCompromissoForm({
         <button
           type="submit"
           disabled={salvando || !titulo.trim()}
-          className="rounded-xl bg-accent py-2.5 text-[13px] font-medium text-bg disabled:opacity-50"
+          className="rounded-xl bg-accent py-2.5 text-[13px] font-medium text-on-accent disabled:opacity-50"
         >
           {salvando ? "Salvando..." : "Salvar compromisso"}
         </button>

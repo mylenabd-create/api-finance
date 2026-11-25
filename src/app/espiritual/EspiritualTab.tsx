@@ -145,7 +145,7 @@ export function EspiritualTab({
                 title={dia}
                 className="h-5 flex-1 rounded-md"
                 style={{
-                  background: marcado ? "var(--purple)" : "#232D39",
+                  background: marcado ? "var(--purple)" : "var(--track)",
                   opacity: marcado ? 1 : 0.5,
                 }}
               />
@@ -159,7 +159,7 @@ export function EspiritualTab({
         disabled={salvando || registradoHoje}
         className="flex w-full items-center justify-center gap-2 rounded-2xl border p-3.5 text-[13.5px] transition-colors disabled:cursor-default"
         style={{
-          borderColor: registradoHoje ? "rgba(183,124,201,0.4)" : "var(--line)",
+          borderColor: registradoHoje ? "rgba(176,0,216,0.4)" : "var(--line)",
           background: "var(--bg-panel)",
           color: registradoHoje ? "var(--purple)" : "var(--text)",
         }}

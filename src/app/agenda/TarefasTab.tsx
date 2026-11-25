@@ -81,7 +81,7 @@ export function TarefasTab({
       <div className="grid grid-cols-4 gap-2">
         <StatCard label="Atrasadas" valor={contagem.atrasada} cor="var(--coral)" />
         <StatCard label="A fazer" valor={contagem.afazer} cor="var(--purple)" />
-        <StatCard label="Andamento" valor={contagem.andamento} cor="#E0B94A" />
+        <StatCard label="Andamento" valor={contagem.andamento} cor="#FF8A00" />
         <StatCard label="Concluídas" valor={contagem.concluida} cor="var(--teal)" />
       </div>
 
@@ -236,7 +236,7 @@ function NovaTarefaForm({
         <button
           type="submit"
           disabled={salvando || !titulo.trim()}
-          className="rounded-xl bg-accent py-2.5 text-[13px] font-medium text-bg disabled:opacity-50"
+          className="rounded-xl bg-accent py-2.5 text-[13px] font-medium text-on-accent disabled:opacity-50"
         >
           {salvando ? "Salvando..." : "Salvar tarefa"}
         </button>

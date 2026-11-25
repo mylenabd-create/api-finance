@@ -149,7 +149,7 @@ export function ReceitasTab({
         <button
           onClick={addReceita}
           disabled={saving}
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-accent py-2 text-[13px] font-medium text-bg disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 rounded-lg bg-accent py-2 text-[13px] font-medium text-on-accent disabled:opacity-50"
         >
           <Plus size={15} /> Adicionar
         </button>

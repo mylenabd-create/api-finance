@@ -9,7 +9,7 @@ export function ProgressBar({
 }) {
   return (
     <div
-      className="overflow-hidden rounded-full bg-[#232D39]"
+      className="overflow-hidden rounded-full bg-track"
       style={{ height }}
     >
       <div

@@ -30,7 +30,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "futuro", label: "Futuro" },
 ];
 
-const CORES_PESSOA = ["#C9A15E", "#5B9C93", "#D9765A", "#7C8FC9", "#B77CC9"];
+const CORES_PESSOA = ["#4B00C8", "#12936A", "#E0301A", "#3D5AFE", "#B000D8"];
 
 export function FinancasClient({
   contaId,

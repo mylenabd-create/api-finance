@@ -108,7 +108,7 @@ export function ExercicioTab({
         <button
           onClick={salvar}
           disabled={salvando || !pessoaId || !tipo.trim()}
-          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent py-2.5 text-[12.5px] text-[#10151C] disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent py-2.5 text-[12.5px] text-on-accent disabled:opacity-50"
         >
           <Plus size={13} /> Salvar treino
         </button>
@@ -127,7 +127,7 @@ export function ExercicioTab({
             <Card key={t.id} className="flex items-center gap-3 p-3">
               <div
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px]"
-                style={{ background: "rgba(91,156,147,0.18)" }}
+                style={{ background: "rgba(18,147,106,0.18)" }}
               >
                 <Dumbbell size={15} className="text-teal" />
               </div>

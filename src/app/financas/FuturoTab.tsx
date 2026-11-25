@@ -113,29 +113,29 @@ export function FuturoTab({
         <p className="m-0 mb-1 ml-2 text-[12.5px] text-text-dim">Receita x despesa prevista por mês</p>
         <ResponsiveContainer width="100%" height={150}>
           <BarChart data={proximosMeses} margin={{ top: 8, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid stroke="#232D39" vertical={false} />
-            <XAxis dataKey="mes" stroke="#8C97A3" fontSize={10} tickLine={false} axisLine={false} />
+            <CartesianGrid stroke="#ECE8F3" vertical={false} />
+            <XAxis dataKey="mes" stroke="#6B6880" fontSize={10} tickLine={false} axisLine={false} />
             <YAxis hide />
             <Tooltip
               contentStyle={{
-                background: "#1E2732",
-                border: "1px solid #2A3441",
+                background: "#FFFFFF",
+                border: "1px solid #E5E7EB",
                 borderRadius: 8,
-                color: "#EDEDE6",
+                color: "#1A1A2E",
                 fontSize: 12,
               }}
               formatter={(v) => formatBRL(Number(v))}
             />
-            <Bar dataKey="receita" fill="#5B9C93" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="despesa" fill="#D9765A" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="receita" fill="#12936A" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="despesa" fill="#E0301A" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
         <div className="mt-0.5 flex gap-4 pl-2 text-[11px] text-text-dim">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#5B9C93" }} /> Receita
+            <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#12936A" }} /> Receita
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#D9765A" }} /> Despesa
+            <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#E0301A" }} /> Despesa
           </span>
         </div>
       </Card>
@@ -150,7 +150,7 @@ export function FuturoTab({
               <Card key={l.id} className="flex items-center gap-3 p-3">
                 <div
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px]"
-                  style={{ background: isReceita ? "rgba(91,156,147,0.15)" : "rgba(217,118,90,0.15)" }}
+                  style={{ background: isReceita ? "rgba(18,147,106,0.15)" : "rgba(224,48,26,0.15)" }}
                 >
                   <TipoIcon size={14} color={isReceita ? "var(--teal)" : "var(--coral)"} />
                 </div>
@@ -213,7 +213,7 @@ export function FuturoTab({
         <button
           onClick={addLancamento}
           disabled={saving}
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-accent py-2 text-[13px] font-medium text-bg disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 rounded-lg bg-accent py-2 text-[13px] font-medium text-on-accent disabled:opacity-50"
         >
           <Plus size={15} /> Adicionar
         </button>

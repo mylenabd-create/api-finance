@@ -335,7 +335,7 @@ export function CartaoClient({
                   <button
                     type="submit"
                     disabled={salvando}
-                    className="mt-1 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-bg disabled:opacity-60"
+                    className="mt-1 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-on-accent disabled:opacity-60"
                   >
                     {salvando ? "Salvando..." : "Adicionar item"}
                   </button>

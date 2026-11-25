@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Tables } from "@/lib/database.types";
 import { calcularStreak, medalha, hojeStr } from "./utils";
 
-const CORES = ["#5B9C93", "#B77CC9", "#7C8FC9", "#C9A15E", "#D9765A"];
+const CORES = ["#12936A", "#B000D8", "#3D5AFE", "#4B00C8", "#E0301A"];
 
 const BADGES = [
   { label: "7 dias", threshold: 7 },
@@ -148,7 +148,7 @@ export function HabitosTab({
           disabled={criando || !novoNome.trim()}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[9px] bg-accent disabled:opacity-50"
         >
-          <Send size={13} color="#10151C" />
+          <Send size={13} color="#ffffff" />
         </button>
       </Card>
 
@@ -227,7 +227,7 @@ export function HabitosTab({
                   }}
                   aria-label="Marcar concluído hoje"
                 >
-                  {concluidoHoje && <Check size={13} color="#10151C" />}
+                  {concluidoHoje && <Check size={13} color="#ffffff" />}
                 </button>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
@@ -288,7 +288,7 @@ function UltimaSemana({
         <div
           key={i}
           className="h-5 w-5 rounded-md"
-          style={{ background: d ? cor : "#232D39", opacity: d ? 1 : 0.5 }}
+          style={{ background: d ? cor : "var(--track)", opacity: d ? 1 : 0.5 }}
         />
       ))}
     </div>

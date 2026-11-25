@@ -162,20 +162,20 @@ export function DespesasTab({
           <p className="m-0 mb-1 ml-2 text-[12.5px] text-text-dim">Ritmo de gastos no mês</p>
           <ResponsiveContainer width="100%" height={120}>
             <LineChart data={trend} margin={{ top: 8, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid stroke="#232D39" vertical={false} />
-              <XAxis dataKey="dia" stroke="#8C97A3" fontSize={10} tickLine={false} axisLine={false} />
+              <CartesianGrid stroke="#ECE8F3" vertical={false} />
+              <XAxis dataKey="dia" stroke="#6B6880" fontSize={10} tickLine={false} axisLine={false} />
               <YAxis hide />
               <Tooltip
                 contentStyle={{
-                  background: "#1E2732",
-                  border: "1px solid #2A3441",
+                  background: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
                   borderRadius: 8,
-                  color: "#EDEDE6",
+                  color: "#1A1A2E",
                   fontSize: 12,
                 }}
                 formatter={(v) => formatBRL(Number(v))}
               />
-              <Line type="monotone" dataKey="valor" stroke="#C9A15E" strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="valor" stroke="#4B00C8" strokeWidth={2.5} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -417,7 +417,7 @@ export function DespesasTab({
         <button
           onClick={addDespesa}
           disabled={saving}
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-accent py-2 text-[13px] font-medium text-bg disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 rounded-lg bg-accent py-2 text-[13px] font-medium text-on-accent disabled:opacity-50"
         >
           <Plus size={15} /> Adicionar
         </button>

@@ -164,7 +164,7 @@ export function BioimpedanciaTab({
         <button
           onClick={salvar}
           disabled={salvando || !pessoaId}
-          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent py-2.5 text-[12.5px] text-[#10151C] disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent py-2.5 text-[12.5px] text-on-accent disabled:opacity-50"
         >
           <Plus size={13} /> Salvar avaliação
         </button>
@@ -181,7 +181,7 @@ export function BioimpedanciaTab({
           <Card key={a.id} className="flex items-center gap-3 p-3">
             <div
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px]"
-              style={{ background: "rgba(201,161,94,0.18)" }}
+              style={{ background: "rgba(75,0,200,0.18)" }}
             >
               <Scale size={15} className="text-accent" />
             </div>
@@ -210,7 +210,7 @@ export function BioimpedanciaTab({
                 onClick={() => setMetrica(m.key)}
                 className={`shrink-0 rounded-full border px-3 py-1.5 text-[11.5px] ${
                   metrica === m.key
-                    ? "border-[rgba(201,161,94,0.4)] bg-accent-soft text-accent"
+                    ? "border-[rgba(75,0,200,0.4)] bg-accent-soft text-accent"
                     : "border-line bg-bg-panel text-text-dim"
                 }`}
               >
@@ -220,23 +220,23 @@ export function BioimpedanciaTab({
           </div>
           <ResponsiveContainer width="100%" height={140}>
             <LineChart data={chartData} margin={{ top: 8, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid stroke="#232D39" vertical={false} />
-              <XAxis dataKey="data" stroke="#8C97A3" fontSize={10} tickLine={false} axisLine={false} />
+              <CartesianGrid stroke="#ECE8F3" vertical={false} />
+              <XAxis dataKey="data" stroke="#6B6880" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip
                 contentStyle={{
-                  background: "#1E2732",
-                  border: "1px solid #2A3441",
+                  background: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
                   borderRadius: 8,
-                  color: "#EDEDE6",
+                  color: "#1A1A2E",
                   fontSize: 12,
                 }}
               />
               <Line
                 type="monotone"
                 dataKey={metrica}
-                stroke="#C9A15E"
+                stroke="#4B00C8"
                 strokeWidth={2.5}
-                dot={{ r: 3, fill: "#C9A15E" }}
+                dot={{ r: 3, fill: "#4B00C8" }}
                 connectNulls
               />
             </LineChart>

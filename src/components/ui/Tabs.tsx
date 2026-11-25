@@ -17,7 +17,7 @@ export function Tabs<T extends string>({
           onClick={() => onChange(tab.key)}
           className={`shrink-0 rounded-full px-3.5 py-1.5 text-[12.5px] transition-colors ${
             active === tab.key
-              ? "bg-accent-soft text-accent"
+              ? "bg-accent font-medium text-on-accent"
               : "text-text-dim"
           }`}
         >

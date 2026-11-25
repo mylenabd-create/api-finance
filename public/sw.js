@@ -1,7 +1,12 @@
-const CACHE_VERSION = "gestor-de-vida-v1";
+const CACHE_VERSION = "cerne-v2";
 const BASE_PATH = "/cerne-gestor";
 const OFFLINE_URL = BASE_PATH + "/offline";
-const PRECACHE_URLS = [OFFLINE_URL, "/manifest.json", "/icons/icon.svg", "/icons/icon-maskable.svg"];
+const PRECACHE_URLS = [
+  OFFLINE_URL,
+  BASE_PATH + "/manifest.json",
+  BASE_PATH + "/icons/icon-192.png",
+  BASE_PATH + "/icons/icon-512.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

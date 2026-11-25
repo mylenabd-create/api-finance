@@ -161,13 +161,23 @@ export function PainelClient({
         </div>
       )}
 
-      <div className="mb-4.5">
-        <p className="m-0 font-mono text-[11.5px] uppercase tracking-[1.2px] text-text-dim">
-          {dataFormatada()}
-        </p>
-        <h1 className="mt-1 font-display text-2xl font-medium text-text">
-          {saudacao()}, {nomePessoa}
-        </h1>
+      <div className="mb-4.5 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="m-0 text-[11.5px] font-medium uppercase tracking-[1.2px] text-text-dim">
+            {dataFormatada()}
+          </p>
+          <h1 className="mt-1 font-display text-2xl text-text">
+            {saudacao()}, {nomePessoa}
+          </h1>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${BASE_PATH}/icons/cerne-marca-256.png`}
+          alt="Cerne"
+          width={36}
+          height={36}
+          className="mt-0.5 shrink-0 rounded-[10px]"
+        />
       </div>
 
       <Card className="mb-1.5 flex items-center gap-2.5 px-3.5 py-3">
@@ -217,7 +227,7 @@ function ModuleCard({ module }: { module: ModuleData }) {
         <div className="mb-2.5 flex items-center justify-between">
           <div
             className="flex h-[30px] w-[30px] items-center justify-center rounded-[9px]"
-            style={{ background: `${module.color}22` }}
+            style={{ background: `color-mix(in srgb, ${module.color} 12%, transparent)` }}
           >
             <Icon size={15} color={module.color} />
           </div>

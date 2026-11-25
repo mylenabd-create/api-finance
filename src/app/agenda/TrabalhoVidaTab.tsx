@@ -80,7 +80,7 @@ function StatBlock({
                 className="flex items-center justify-center"
                 style={{ width: `${pctTrabalho}%`, background: "var(--accent)" }}
               >
-                <span className="font-mono text-[10.5px] text-bg">{trabalho}</span>
+                <span className="font-mono text-[10.5px] text-on-accent">{trabalho}</span>
               </div>
             )}
             {pessoal > 0 && (
@@ -88,7 +88,7 @@ function StatBlock({
                 className="flex items-center justify-center"
                 style={{ width: `${pctPessoal}%`, background: "var(--teal)" }}
               >
-                <span className="font-mono text-[10.5px] text-bg">{pessoal}</span>
+                <span className="font-mono text-[10.5px] text-on-accent">{pessoal}</span>
               </div>
             )}
           </div>

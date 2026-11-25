@@ -1,37 +1,66 @@
 @import "tailwindcss";
 
+/*
+ * Paleta do Manual de Identidade Visual CERNE (v1.1).
+ * Cores oficiais: roxo profundo #31004F, roxo intenso #4B00C8, magenta #B000D8,
+ * rosa #F00082, coral #FF3B19, laranja #FF8A00, amarelo #FFE500.
+ * Apoio sugerido: off-white #F8F7FA, grafite #1A1A2E, cinza claro #E5E7EB.
+ * Os tons "funcionais" (verde de sucesso, vermelho de erro, texto secundário)
+ * não estão definidos no manual: são recomendações de interface com contraste
+ * adequado sobre fundo claro.
+ */
 :root {
-  --bg: #10151c;
-  --bg-panel: #171e27;
-  --bg-panel-raised: #1e2732;
-  --line: #2a3441;
-  --text: #edede6;
-  --text-dim: #8c97a3;
-  --accent: #c9a15e;
-  --accent-soft: rgba(201, 161, 94, 0.14);
-  --teal: #5b9c93;
-  --coral: #d9765a;
-  --purple: #b77cc9;
-  --blue: #7c8fc9;
+  --deep: #31004f;
+  --bg: #f8f7fa;
+  --bg-panel: #ffffff;
+  --bg-panel-raised: #f1edf7;
+  --line: #e5e7eb;
+  --track: #ece8f3;
+  --text: #1a1a2e;
+  --text-dim: #6b6880;
+  --accent: #4b00c8;
+  --accent-soft: rgba(75, 0, 200, 0.09);
+  --on-accent: #ffffff;
+  --teal: #12936a; /* verde funcional (estados positivos) */
+  --coral: #e0301a; /* vermelho funcional (despesas, erros) */
+  --purple: #b000d8;
+  --blue: #3d5afe;
+  --orange: #ff8a00;
+  --pink: #f00082;
 
-  --font-display: var(--font-fraunces), Georgia, serif;
-  --font-body: var(--font-plex-sans), system-ui, sans-serif;
+  --brand-gradient: linear-gradient(
+    135deg,
+    #ffe500 0%,
+    #ff8a00 20%,
+    #ff3b19 40%,
+    #f00082 60%,
+    #b000d8 80%,
+    #4b00c8 100%
+  );
+
+  --font-display: var(--font-poppins), system-ui, sans-serif;
+  --font-body: var(--font-poppins), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), monospace;
 }
 
 @theme inline {
+  --color-deep: var(--deep);
   --color-bg: var(--bg);
   --color-bg-panel: var(--bg-panel);
   --color-bg-panel-raised: var(--bg-panel-raised);
   --color-line: var(--line);
+  --color-track: var(--track);
   --color-text: var(--text);
   --color-text-dim: var(--text-dim);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
   --color-teal: var(--teal);
   --color-coral: var(--coral);
   --color-purple: var(--purple);
   --color-blue: var(--blue);
+  --color-orange: var(--orange);
+  --color-pink: var(--pink);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
@@ -50,6 +79,17 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
+}
+
+/* Títulos em Poppins SemiBold/Bold, como pede o manual. */
+.font-display {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Gradiente oficial: reservado a destaques, nunca em todos os botões/cards. */
+.bg-brand-gradient {
+  background: var(--brand-gradient);
 }
 
 ::-webkit-scrollbar {

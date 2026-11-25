@@ -6,7 +6,7 @@ export default function OfflinePage() {
       <WifiOff size={28} className="text-text-dim" />
       <h1 className="font-display text-xl font-medium">Você está offline</h1>
       <p className="text-sm text-text-dim">
-        Sem conexão no momento. Assim que a internet voltar, o Gestor de Vida
+        Sem conexão no momento. Assim que a internet voltar, o Cerne
         volta a sincronizar automaticamente.
       </p>
     </div>

@@ -1,19 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Poppins, IBM_Plex_Mono } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { PwaRegister } from "@/components/PwaRegister";
+import { BASE_PATH } from "@/lib/basePath";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Manual de Identidade Visual CERNE: Poppins é a família tipográfica do app.
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -23,22 +19,26 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gestor de Vida",
-  description: "Secretária pessoal com IA para finanças, hábitos, agenda e vida espiritual.",
-  manifest: "/manifest.json",
+  title: "Cerne",
+  description: "Organize sua vida. Encontre seu centro.",
+  applicationName: "Cerne",
+  manifest: `${BASE_PATH}/manifest.json`,
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Gestor de Vida",
+    statusBarStyle: "default",
+    title: "Cerne",
   },
   icons: {
-    icon: "/icons/icon.svg",
-    apple: "/icons/icon.svg",
+    icon: [
+      { url: `${BASE_PATH}/icons/favicon-48.png`, sizes: "48x48", type: "image/png" },
+      { url: `${BASE_PATH}/icons/icon-192.png`, sizes: "192x192", type: "image/png" },
+    ],
+    apple: { url: `${BASE_PATH}/icons/apple-touch-icon.png`, sizes: "180x180" },
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#10151c",
+  themeColor: "#f8f7fa",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${fraunces.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${poppins.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text">
         <AppShell>{children}</AppShell>

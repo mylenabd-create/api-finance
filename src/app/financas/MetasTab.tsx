@@ -155,7 +155,7 @@ export function MetasTab({
         onClick={addArea}
         disabled={creating}
         className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed p-3 text-[13px] text-accent disabled:opacity-50"
-        style={{ borderColor: "rgba(201,161,94,0.4)" }}
+        style={{ borderColor: "rgba(75,0,200,0.4)" }}
       >
         <Plus size={15} /> Adicionar área
       </button>

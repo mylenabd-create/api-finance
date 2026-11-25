@@ -59,11 +59,19 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-1 flex-col justify-center gap-6 px-2 py-10">
-      <div>
-        <p className="font-mono text-[11.5px] uppercase tracking-[1.2px] text-text-dim">
-          Gestor de Vida
-        </p>
-        <h1 className="mt-1 font-display text-[26px] font-medium">
+      <div className="flex flex-col items-center text-center">
+        {/* Símbolo isolado Cerne Evolução (Manual CERNE, seção 4.D) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${BASE_PATH}/icons/cerne-marca-256.png`}
+          alt="Cerne"
+          width={88}
+          height={88}
+          className="rounded-[22px] shadow-[0_8px_24px_rgba(49,0,79,0.25)]"
+        />
+        <p className="mt-4 text-[28px] font-extrabold tracking-[0.12em] text-deep">CERNE</p>
+        <p className="mt-0.5 text-[13px] text-text-dim">Organize sua vida. Encontre seu centro.</p>
+        <h1 className="mt-6 font-display text-[22px] text-text">
           {mode === "entrar" ? "Bem-vinda de volta" : "Criar sua conta"}
         </h1>
       </div>
@@ -93,7 +101,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-1 flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-medium text-bg disabled:opacity-60"
+          className="mt-1 flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-medium text-on-accent disabled:opacity-60"
         >
           <Send size={15} />
           {mode === "entrar" ? "Entrar" : "Criar conta"}

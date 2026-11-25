@@ -2,7 +2,7 @@ import type { PrioridadeTarefa, StatusTarefa, TipoCompromisso } from "./types";
 
 // Amarelo não tem token global (ver instruções) — usado só para o status
 // "andamento" de tarefa, igual ao protótipo.
-export const AMARELO = "#E0B94A";
+export const AMARELO = "#FF8A00";
 
 export const tipoCompromissoMeta: Record<
   TipoCompromisso,
@@ -18,15 +18,15 @@ export const statusTarefaMeta: Record<
   StatusTarefa,
   { label: string; cor: string; bg: string }
 > = {
-  afazer: { label: "A fazer", cor: "var(--purple)", bg: "rgba(183,124,201,0.15)" },
-  andamento: { label: "Em andamento", cor: AMARELO, bg: "rgba(224,185,74,0.15)" },
-  concluida: { label: "Concluída", cor: "var(--teal)", bg: "rgba(91,156,147,0.15)" },
+  afazer: { label: "A fazer", cor: "var(--purple)", bg: "rgba(176,0,216,0.15)" },
+  andamento: { label: "Em andamento", cor: AMARELO, bg: "rgba(255,138,0,0.15)" },
+  concluida: { label: "Concluída", cor: "var(--teal)", bg: "rgba(18,147,106,0.15)" },
 };
 
 export const atrasadaMeta = {
   label: "Atrasada",
   cor: "var(--coral)",
-  bg: "rgba(217,118,90,0.18)",
+  bg: "rgba(224,48,26,0.18)",
 };
 
 export const statusOrder: StatusTarefa[] = ["afazer", "andamento", "concluida"];

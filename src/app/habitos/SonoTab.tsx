@@ -126,7 +126,7 @@ export function SonoTab({
         <button
           onClick={salvar}
           disabled={salvando || !pessoaId}
-          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent py-2.5 text-[12.5px] text-[#10151C] disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent py-2.5 text-[12.5px] text-on-accent disabled:opacity-50"
         >
           <Plus size={13} /> Salvar registro
         </button>
