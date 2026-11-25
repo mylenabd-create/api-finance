@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getContaAtual } from "@/lib/conta";
 import { interpretarMensagem } from "@/lib/claude";
 import { registrarLancamentos } from "@/lib/ingestao";
+import { interpretarSemIA } from "@/lib/interpretadorSimples";
 import { transcreverAudio } from "@/lib/transcricao";
 
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
@@ -90,6 +91,28 @@ export async function POST(request: Request) {
     supabase.from("pessoa").select("nome").eq("conta_id", conta.contaId),
     supabase.from("categoria").select("nome").eq("conta_id", conta.contaId),
   ]);
+
+  // Sem chave do Claude: usa o interpretador gratuito, que só entende
+  // lançamentos de dinheiro em texto (sem foto, PDF ou áudio).
+  if (!process.env.ANTHROPIC_API_KEY) {
+    if (content.some((c) => c.type !== "text")) {
+      return NextResponse.json(
+        { error: "Fotos, PDFs e áudios precisam da secretária com IA, que ainda não está ativada." },
+        { status: 400 }
+      );
+    }
+    const simples = interpretarSemIA(texto, categorias ?? []);
+    if (simples.length === 0) {
+      return NextResponse.json({
+        lancamentos: [],
+        resultados: [],
+        aviso:
+          'Por enquanto eu entendo gastos e entradas de dinheiro, como "gastei 30 de mercado" ou "recebi 2000 de salário".',
+      });
+    }
+    const resultados = await registrarLancamentos(supabase, conta.contaId, "ia_texto", simples);
+    return NextResponse.json({ lancamentos: simples, resultados });
+  }
 
   let lancamentos;
   try {

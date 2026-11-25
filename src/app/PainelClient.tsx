@@ -118,9 +118,22 @@ export function PainelClient({
       } else if (data.aviso) {
         setFeedback(data.aviso);
       } else {
-        const ok = (data.resultados ?? []).filter((r: { ok: boolean }) => r.ok).length;
-        const total = (data.resultados ?? []).length;
-        setFeedback(`${ok}/${total} lançamento(s) registrado(s).`);
+        const resultados: { ok: boolean; descricao: string }[] = data.resultados ?? [];
+        const lancs: { descricao: string; valor?: number; area: string }[] = data.lancamentos ?? [];
+        const anotados = resultados
+          .map((r, i) => ({ ...r, l: lancs[i] }))
+          .filter((r) => r.ok)
+          .map((r) =>
+            r.l?.valor != null && (r.l.area === "despesa" || r.l.area === "receita")
+              ? `${r.descricao} ${r.l.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}${r.l.area === "receita" ? " (entrada)" : ""}`
+              : r.descricao
+          );
+        const falhas = resultados.length - anotados.length;
+        setFeedback(
+          anotados.length > 0
+            ? `Anotado: ${anotados.join(" · ")}${falhas > 0 ? ` (${falhas} não registrado)` : ""}`
+            : "Não consegui registrar. Tente de novo."
+        );
         setMensagem("");
         router.refresh();
       }
