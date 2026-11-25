@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Tabs } from "@/components/ui/Tabs";
+import { useAba } from "@/lib/useAba";
 import { BackButton } from "@/components/ui/BackButton";
 import { AgendaTab } from "./AgendaTab";
 import { TarefasTab } from "./TarefasTab";
@@ -29,7 +29,7 @@ export function AgendaClient({
   googleConectado: boolean;
   ultimaSincronizacaoGoogle: string | null;
 }) {
-  const [tab, setTab] = useState<TabKey>("agenda");
+  const [tab, setTab] = useAba<TabKey>(["agenda", "tarefas", "trabalho"], "agenda");
 
   return (
     <div className="px-4 pb-6 pt-4">

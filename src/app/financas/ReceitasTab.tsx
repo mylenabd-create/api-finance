@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowUpCircle, MinusCircle, Plus, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
+import { BotaoApagar } from "@/components/ui/BotaoApagar";
 import { formatBRL } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
 import type { Pessoa, ReceitaComPessoa } from "./types";
@@ -102,6 +103,13 @@ export function ReceitasTab({
                     {r.recorrente ? "Recorrente" : "Pontual"} · {pct}% do total
                   </p>
                 </div>
+                <BotaoApagar
+                  rotulo="Apagar receita"
+                  onConfirmar={async () => {
+                    await supabase.from("receita").delete().eq("id", r.id);
+                    router.refresh();
+                  }}
+                />
               </Card>
             );
           })}

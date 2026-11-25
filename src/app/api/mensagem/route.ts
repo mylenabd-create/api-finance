@@ -2,13 +2,45 @@ import { NextResponse } from "next/server";
 import type Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/supabase/server";
 import { getContaAtual } from "@/lib/conta";
-import { interpretarMensagem } from "@/lib/claude";
+import { AREAS, interpretarMensagem, type LancamentoExtraido } from "@/lib/claude";
 import { registrarLancamentos } from "@/lib/ingestao";
 import { interpretarSemIA } from "@/lib/interpretadorSimples";
 import { transcreverAudio } from "@/lib/transcricao";
 
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
 type ImageMediaType = "image/jpeg" | "image/png" | "image/gif" | "image/webp";
+
+// Aceita só campos conhecidos e tipos corretos dos lançamentos confirmados.
+function sanitizarLancamentos(entrada: unknown[]): LancamentoExtraido[] {
+  const texto = (v: unknown, max = 200) =>
+    typeof v === "string" && v.trim() ? v.trim().slice(0, max) : undefined;
+  const saida: LancamentoExtraido[] = [];
+  for (const item of entrada.slice(0, 20)) {
+    if (!item || typeof item !== "object") continue;
+    const l = item as Record<string, unknown>;
+    if (typeof l.area !== "string" || !(AREAS as readonly string[]).includes(l.area)) continue;
+    const descricao = texto(l.descricao);
+    if (!descricao) continue;
+    const valor = typeof l.valor === "number" && Number.isFinite(l.valor) && l.valor >= 0 ? l.valor : undefined;
+    saida.push({
+      area: l.area as LancamentoExtraido["area"],
+      descricao,
+      valor,
+      data: typeof l.data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(l.data) ? l.data : undefined,
+      hora: typeof l.hora === "string" && /^\d{2}:\d{2}$/.test(l.hora) ? l.hora : undefined,
+      categoria: texto(l.categoria, 60),
+      pessoa: texto(l.pessoa, 80),
+      concluido: typeof l.concluido === "boolean" ? l.concluido : undefined,
+      prioridade: ["baixa", "media", "alta"].includes(l.prioridade as string)
+        ? (l.prioridade as LancamentoExtraido["prioridade"])
+        : undefined,
+      tipo_compromisso: ["trabalho", "pessoal", "pagamento", "saude"].includes(l.tipo_compromisso as string)
+        ? (l.tipo_compromisso as LancamentoExtraido["tipo_compromisso"])
+        : undefined,
+    });
+  }
+  return saida;
+}
 
 async function arquivoParaBase64(arquivo: File) {
   const buffer = await arquivo.arrayBuffer();
@@ -28,6 +60,7 @@ export async function POST(request: Request) {
 
   let texto = "";
   let usouAudio = false;
+  let previa = false;
   const content: Anthropic.MessageParam["content"] = [];
 
   if (contentType.includes("multipart/form-data")) {
@@ -75,6 +108,20 @@ export async function POST(request: Request) {
   } else {
     const body = await request.json().catch(() => null);
     texto = typeof body?.texto === "string" ? body.texto.trim() : "";
+    previa = body?.previa === true;
+
+    // Segundo passo da prévia: a pessoa revisou (e talvez corrigiu) os
+    // lançamentos e confirmou. Grava exatamente o que ela aprovou.
+    if (Array.isArray(body?.confirmar)) {
+      const aprovados = sanitizarLancamentos(body.confirmar);
+      if (aprovados.length === 0) {
+        return NextResponse.json({ error: "nada para registrar" }, { status: 400 });
+      }
+      const supabase = await createClient();
+      const origem = body?.origem === "ia_audio" ? "ia_audio" : "ia_texto";
+      const resultados = await registrarLancamentos(supabase, conta.contaId, origem, aprovados);
+      return NextResponse.json({ lancamentos: aprovados, resultados });
+    }
   }
 
   if (texto) content.push({ type: "text", text: texto });
@@ -110,6 +157,7 @@ export async function POST(request: Request) {
           'Por enquanto eu entendo gastos e entradas de dinheiro, como "gastei 30 de mercado" ou "recebi 2000 de salário".',
       });
     }
+    if (previa) return NextResponse.json({ lancamentos: simples, previa: true });
     const resultados = await registrarLancamentos(supabase, conta.contaId, "ia_texto", simples);
     return NextResponse.json({ lancamentos: simples, resultados });
   }
@@ -135,6 +183,8 @@ export async function POST(request: Request) {
       aviso: "Nenhum lançamento identificado nessa mensagem.",
     });
   }
+
+  if (previa) return NextResponse.json({ lancamentos, previa: true });
 
   const origem = content.some((c) => c.type === "image")
     ? "ia_imagem"

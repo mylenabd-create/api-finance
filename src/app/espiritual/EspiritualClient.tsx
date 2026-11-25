@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Tabs } from "@/components/ui/Tabs";
+import { useAba } from "@/lib/useAba";
 import { BackButton } from "@/components/ui/BackButton";
 import { EspiritualTab } from "./EspiritualTab";
 import { LeituraTab } from "./LeituraTab";
@@ -20,7 +20,7 @@ export function EspiritualClient({
   praticas: PraticaEspiritual[];
   livros: Livro[];
 }) {
-  const [tab, setTab] = useState<TabKey>("espiritual");
+  const [tab, setTab] = useAba<TabKey>(["espiritual", "leitura"], "espiritual");
 
   return (
     <div>

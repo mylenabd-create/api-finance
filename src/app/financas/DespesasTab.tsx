@@ -19,6 +19,7 @@ import {
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Avatar } from "@/components/ui/Avatar";
+import { BotaoApagar } from "@/components/ui/BotaoApagar";
 import { formatBRL } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
 import { iconeCategoria } from "./icons";
@@ -362,6 +363,12 @@ export function DespesasTab({
                     {new Date(t.data + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
                   </p>
                 </div>
+                <BotaoApagar
+                  onConfirmar={async () => {
+                    await supabase.from("transacao").delete().eq("id", t.id);
+                    router.refresh();
+                  }}
+                />
               </Card>
             );
           })}

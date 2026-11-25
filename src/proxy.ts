@@ -31,7 +31,8 @@ export async function proxy(request: NextRequest) {
 
   // fallback offline do PWA: precisa responder 200 sempre (mesmo deslogado)
   // para o service worker conseguir pré-cachear a página no install.
-  if (request.nextUrl.pathname === "/offline") {
+  // política de privacidade é pública (exigida pelo Google OAuth)
+  if (request.nextUrl.pathname === "/offline" || request.nextUrl.pathname === "/privacidade") {
     return response;
   }
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Tabs } from "@/components/ui/Tabs";
+import { useAba } from "@/lib/useAba";
 import { BackButton } from "@/components/ui/BackButton";
 import type { Tables } from "@/lib/database.types";
 import { HabitosTab } from "./HabitosTab";
@@ -33,7 +33,7 @@ export function HabitosClient({
   treinos: Tables<"treino">[];
   avaliacoes: Tables<"avaliacao_bioimpedancia">[];
 }) {
-  const [tab, setTab] = useState<TabKey>("habitos");
+  const [tab, setTab] = useAba<TabKey>(["habitos", "sono", "exercicio", "bioimpedancia"], "habitos");
 
   return (
     <div>

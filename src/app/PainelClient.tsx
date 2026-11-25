@@ -19,6 +19,7 @@ import {
   CreditCard,
   Mic,
   Square,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -91,6 +92,28 @@ function obterReconhecedor(): ConstrutorReconhecedor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
+type ItemPrevia = {
+  area: string;
+  descricao: string;
+  valor?: number;
+  categoria?: string;
+  valorTexto: string;
+  [campo: string]: unknown;
+};
+
+const ROTULO_AREA: Record<string, string> = {
+  despesa: "Gasto",
+  receita: "Entrada",
+  habito: "Hábito",
+  tarefa: "Tarefa",
+  compromisso: "Agenda",
+  leitura: "Leitura",
+  espiritual: "Espiritual",
+  treino: "Treino",
+  sono: "Sono",
+  bioimpedancia: "Bioimpedância",
+};
+
 // suporte a voz não muda durante a sessão: nada para assinar
 const semInscricao = () => () => {};
 
@@ -133,7 +156,7 @@ export function PainelClient({
   }
 
   // Reconhecimento de voz do próprio navegador (gratuito; Chrome/Android e
-  // Safari/iPhone). O texto falado vai para a caixa e é enviado sozinho.
+  // Safari/iPhone). O texto falado vai para a caixa para a pessoa conferir.
   const [ouvindo, setOuvindo] = useState(false);
   const vozDisponivel = useSyncExternalStore(
     semInscricao,
@@ -141,6 +164,8 @@ export function PainelClient({
     () => false
   );
   const reconhecedorRef = useRef<ReconhecedorVoz | null>(null);
+  const usouVozRef = useRef(false);
+  const [previa, setPrevia] = useState<ItemPrevia[] | null>(null);
 
   function alternarVoz() {
     if (ouvindo) {
@@ -153,15 +178,16 @@ export function PainelClient({
     rec.lang = "pt-BR";
     rec.interimResults = true;
     rec.continuous = false;
-    let finalTexto = "";
+    // Remonta a frase inteira a cada evento (em vez de ir somando pedaços),
+    // porque alguns celulares reenviam trechos já reconhecidos e isso
+    // duplicava números ("30" virava "1030").
     rec.onresult = (e) => {
-      let parcial = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const r = e.results[i];
-        if (r.isFinal) finalTexto += r[0].transcript;
-        else parcial += r[0].transcript;
-      }
-      setMensagem((finalTexto + parcial).trim());
+      const frase = Array.from(e.results)
+        .map((r) => r[0].transcript)
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+      setMensagem(frase);
     };
     rec.onerror = (e) => {
       if (e.error === "not-allowed" || e.error === "service-not-allowed") {
@@ -170,10 +196,12 @@ export function PainelClient({
         setFeedback("Não consegui ouvir. Tente de novo.");
       }
     };
+    // Ao terminar de ouvir, o texto fica na caixa para a pessoa conferir;
+    // nada é enviado sem ela tocar em enviar e depois confirmar a prévia.
     rec.onend = () => {
       setOuvindo(false);
       reconhecedorRef.current = null;
-      if (finalTexto.trim()) enviarMensagem(finalTexto.trim());
+      usouVozRef.current = true;
     };
     reconhecedorRef.current = rec;
     setFeedback(null);
@@ -181,22 +209,64 @@ export function PainelClient({
     rec.start();
   }
 
-  async function enviarMensagem(textoFalado?: string) {
-    const texto = (textoFalado ?? mensagem).trim();
+  // Passo 1: pede ao servidor só a interpretação (prévia), sem gravar nada.
+  async function enviarMensagem() {
+    const texto = mensagem.trim();
     if (!texto || enviando) return;
+    setEnviando(true);
+    setFeedback(null);
+    setPrevia(null);
+    try {
+      const res = await fetch(`${BASE_PATH}/api/mensagem`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto, previa: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFeedback(data.error ?? "Não consegui processar essa mensagem.");
+      } else if (data.aviso || !data.lancamentos?.length) {
+        setFeedback(data.aviso ?? "Não identifiquei nenhum lançamento nessa mensagem.");
+      } else {
+        setPrevia(
+          (data.lancamentos as ItemPrevia[]).map((l) => ({
+            ...l,
+            valorTexto: l.valor != null ? String(l.valor).replace(".", ",") : "",
+          }))
+        );
+      }
+    } catch {
+      setFeedback("Falha ao falar com a secretária. Tente de novo.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  // Passo 2: grava exatamente o que a pessoa revisou e confirmou.
+  async function confirmarPrevia() {
+    if (!previa || enviando) return;
+    const aprovados = previa.map(({ valorTexto, ...l }) => {
+      const n = Number(valorTexto.replace(/\./g, "").replace(",", "."));
+      return { ...l, valor: valorTexto.trim() && Number.isFinite(n) ? n : l.valor };
+    });
+    if (aprovados.some((l) => (l.area === "despesa" || l.area === "receita") && !(l.valor! > 0))) {
+      setFeedback("Confira os valores antes de confirmar.");
+      return;
+    }
     setEnviando(true);
     setFeedback(null);
     try {
       const res = await fetch(`${BASE_PATH}/api/mensagem`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto }),
+        body: JSON.stringify({
+          confirmar: aprovados,
+          origem: usouVozRef.current ? "ia_audio" : "ia_texto",
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setFeedback(data.error ?? "Não consegui processar essa mensagem.");
-      } else if (data.aviso) {
-        setFeedback(data.aviso);
+        setFeedback(data.error ?? "Não consegui registrar.");
       } else {
         const resultados: { ok: boolean; descricao: string }[] = data.resultados ?? [];
         const lancs: { descricao: string; valor?: number; area: string }[] = data.lancamentos ?? [];
@@ -215,6 +285,8 @@ export function PainelClient({
             : "Não consegui registrar. Tente de novo."
         );
         setMensagem("");
+        setPrevia(null);
+        usouVozRef.current = false;
         router.refresh();
       }
     } catch {
@@ -222,6 +294,17 @@ export function PainelClient({
     } finally {
       setEnviando(false);
     }
+  }
+
+  function atualizarItem(i: number, mudanca: Partial<ItemPrevia>) {
+    setPrevia((p) => (p ? p.map((l, j) => (j === i ? { ...l, ...mudanca } : l)) : p));
+  }
+
+  function removerItem(i: number) {
+    setPrevia((p) => {
+      const novo = p ? p.filter((_, j) => j !== i) : p;
+      return novo && novo.length > 0 ? novo : null;
+    });
   }
 
   const lembretesVisiveis = lembretes.filter((l) => !dispensados.has(l.id));
@@ -254,23 +337,13 @@ export function PainelClient({
         </div>
       )}
 
-      <div className="mb-4.5 flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="m-0 text-[11.5px] font-medium uppercase tracking-[1.2px] text-text-dim">
-            {dataFormatada()}
-          </p>
-          <h1 className="mt-1 font-display text-2xl text-text">
-            {saudacao()}, {nomePessoa}
-          </h1>
-        </div>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`${BASE_PATH}/icons/cerne-marca-256.png`}
-          alt="Cerne"
-          width={36}
-          height={36}
-          className="mt-0.5 shrink-0 rounded-[10px]"
-        />
+      <div className="mb-4.5">
+        <p className="m-0 text-[11.5px] font-medium uppercase tracking-[1.2px] text-text-dim">
+          {dataFormatada()}
+        </p>
+        <h1 className="mt-1 font-display text-2xl text-text">
+          {saudacao()}, {nomePessoa}
+        </h1>
       </div>
 
       <Card className="mb-1.5 flex items-center gap-2.5 px-3.5 py-3">
@@ -306,6 +379,77 @@ export function PainelClient({
           <Send size={16} className="text-accent" />
         </button>
       </Card>
+
+      {previa && (
+        <Card className="mb-2 mt-2 p-3.5" style={{ borderColor: "var(--accent)" }}>
+          <p className="text-[12px] font-semibold uppercase tracking-[1px] text-text-dim">
+            Confira antes de salvar
+          </p>
+          <ul className="mt-2 flex flex-col gap-2">
+            {previa.map((l, i) => {
+              const dinheiro = l.area === "despesa" || l.area === "receita";
+              return (
+                <li key={i} className="flex items-center gap-2 rounded-xl bg-bg-panel-raised px-2.5 py-2">
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${
+                      l.area === "receita" ? "bg-teal/15 text-teal" : "bg-accent-soft text-accent"
+                    }`}
+                  >
+                    {ROTULO_AREA[l.area] ?? l.area}
+                  </span>
+                  <input
+                    value={l.descricao}
+                    onChange={(e) => atualizarItem(i, { descricao: e.target.value })}
+                    aria-label="Descrição"
+                    className="min-w-0 flex-1 bg-transparent text-[13px] text-text outline-none"
+                  />
+                  {dinheiro && (
+                    <label className="flex shrink-0 items-center gap-1 rounded-lg border border-line bg-bg-panel px-2 py-1">
+                      <span className="text-[11px] text-text-dim">R$</span>
+                      <input
+                        value={l.valorTexto}
+                        onChange={(e) => atualizarItem(i, { valorTexto: e.target.value })}
+                        inputMode="decimal"
+                        aria-label="Valor"
+                        className="w-[64px] bg-transparent text-right font-mono text-[13px] text-text outline-none"
+                      />
+                    </label>
+                  )}
+                  <button
+                    onClick={() => removerItem(i)}
+                    aria-label="Remover da prévia"
+                    className="shrink-0 p-0.5 text-text-dim"
+                  >
+                    <X size={14} />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          {previa.some((l) => l.categoria) && (
+            <p className="mt-2 text-[11.5px] text-text-dim">
+              Categoria:{" "}
+              {[...new Set(previa.map((l) => l.categoria).filter(Boolean))].join(", ")}
+            </p>
+          )}
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => setPrevia(null)}
+              disabled={enviando}
+              className="flex-1 rounded-xl border border-line bg-bg-panel py-2.5 text-[13px] font-medium text-text"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={confirmarPrevia}
+              disabled={enviando}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent py-2.5 text-[13px] font-semibold text-on-accent disabled:opacity-60"
+            >
+              <Check size={15} /> Confirmar
+            </button>
+          </div>
+        </Card>
+      )}
       {feedback && (
         <p className="mb-3.5 px-1 text-[12px] text-text-dim">{feedback}</p>
       )}

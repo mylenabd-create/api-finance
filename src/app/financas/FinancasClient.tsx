@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import { Tabs } from "@/components/ui/Tabs";
+import { useAba } from "@/lib/useAba";
 import { Avatar } from "@/components/ui/Avatar";
 import { BackButton } from "@/components/ui/BackButton";
 import { createClient } from "@/lib/supabase/client";
@@ -57,7 +58,7 @@ export function FinancasClient({
 }) {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
-  const [tab, setTab] = useState<TabKey>("despesas");
+  const [tab, setTab] = useAba<TabKey>(["despesas", "receitas", "metas", "futuro"], "despesas");
   const [addingPessoa, setAddingPessoa] = useState(false);
 
   const nomeMesAtual = useMemo(() => {
